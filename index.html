@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Vault - Egyptian Mathematics Adventure</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles and Variables */
+        :root {
+            --primary-dark: #0c1a1a;
+            --primary-gold: #d4af37;
+            --primary-sand: #c2a467;
+            --primary-sand-light: #d8c690;
+            --primary-sand-dark: #8b7355;
+            --accent-blue: #1a5276;
+            --accent-red: #922b21;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --light-text: #f5f5f5;
+            --dark-text: #333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--primary-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 115, 85, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 20%);
+            color: var(--light-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Decorative elements */
+        .hieroglyph {
+            position: absolute;
+            opacity: 0.05;
+            font-size: 2rem;
+            z-index: -1;
+        }
+        
+        .egypt-border {
+            border-bottom: 3px solid var(--primary-gold);
+            position: relative;
+        }
+        
+        .egypt-border:after {
+            content: "𓃀𓃁𓃂𓃃𓃄𓃅𓃆";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 8px;
+            color: var(--primary-gold);
+        }
+        
+        /* Welcome Modal */
+        .welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 26, 26, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .welcome-content {
+            background: linear-gradient(145deg, var(--primary-sand-dark), var(--primary-dark));
+            border: 5px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--primary-gold);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-content:before {
+            content: "𓁟";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 3rem;
+            opacity: 0.3;
+        }
+        
+        .welcome-content h2 {
+            color: var(--primary-gold);
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .welcome-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--primary-sand-light);
+        }
+        
+        .start-btn {
+            background-color: var(--primary-gold);
+            color: var(--primary-dark);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .start-btn:hover {
+            background-color: var(--primary-sand-light);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
+        
+        /* Header */
+        header {
+            background-color: rgba(12, 26, 26, 0.9);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid var(--primary-gold);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            color: var(--primary-gold);
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+        }
+        
+        .logo span {
+            color: var(--primary-sand-light);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .points-display {
+            background-color: var(--accent-blue);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .points-display i {
+            color: var(--primary-gold);
+        }
+        
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-sand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary-gold);
+        }
+        
+        /* Quest Map */
+        .quest-map {
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--primary-gold);
+            text-align: center;
+            position: relative;
+        }
+        
+        .map-container {
+            background-color: rgba(139, 115, 85, 0.2);
+            border: 3px solid var(--primary-sand);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .map-container:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://as2.ftcdn.net/v2/jpg/03/98/72/47/1000_F_398724743_L9iuOqS8LgL3MGYQc9iCkrY2umR63MbE.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        
+        .chapters-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .chapter-card {
+            background: linear-gradient(145deg, var(--primary-sand-dark), var(--primary-dark));
+            width: 180px;
+            padding: 20px 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--primary-sand);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chapter-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 10px 20px var(--shadow);
+        }
+        
+        .chapter-card.locked {
+            opacity: 0.6;
+            filter: grayscale(0.7);
+            cursor: not-allowed;
+        }
+        
+        .chapter-card.active {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
+        
+        .chapter-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-gold);
+        }
+        
+        .chapter-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-sand-light);
+        }
+        
+        .chapter-status {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+        
+        .status-completed {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .status-in-progress {
+            background-color: var(--warning);
+            color: var(--dark-text);
+        }
+        
+        .status-locked {
+            background-color: #7f8c8d;
+            color: white;
+        }
+        
+        .chapter-progress {
+            height: 5px;
+            background-color: #555;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-gold);
+            width: 0%;
+            transition: width 1s ease;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .feature-card {
+            background-color: rgba(26, 82, 118, 0.2);
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-gold);
+            box-shadow: 0 10px 20px var(--shadow);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            color: var(--primary-sand-light);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        /* Tools Section */
+        .tools {
+            padding: 60px 0;
+        }
+        
+        .tools-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .tool-card {
+            background-color: rgba(139, 115, 85, 0.2);
+            width: 180px;
+            padding: 25px 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--primary-sand);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tool-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-gold);
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+        }
+        
+        .tool-name {
+            font-weight: bold;
+            color: var(--primary-sand-light);
+            margin-bottom: 10px;
+        }
+        
+        .tool-cost {
+            background-color: var(--primary-dark);
+            color: var(--primary-gold);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            border: 1px solid var(--primary-gold);
+        }
+        
+        /* Question Modal */
+        .question-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(12, 26, 26, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            padding: 20px;
+            display: none;
+        }
+        
+        .question-content {
+            background: linear-gradient(145deg, var(--primary-sand-dark), var(--primary-dark));
+            border: 5px solid var(--primary-gold);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px var(--primary-gold);
+            position: relative;
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary-gold);
+        }
+        
+        .question-header h3 {
+            color: var(--primary-gold);
+            font-size: 1.8rem;
+        }
+        
+        .question-timer {
+            background-color: var(--accent-red);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .question-body {
+            margin-bottom: 30px;
+        }
+        
+        .question-text {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-gold);
+        }
+        
+        .answer-upload {
+            background-color: rgba(26, 82, 118, 0.2);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border: 2px dashed var(--accent-blue);
+        }
+        
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover {
+            background-color: rgba(26, 82, 118, 0.3);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-gold);
+            margin-bottom: 15px;
+        }
+        
+        .question-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-gold);
+            color: var(--primary-dark);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-sand-light);
+        }
+        
+        .btn-secondary {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #2471a3;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: rgba(12, 26, 26, 0.95);
+            padding: 40px 0 20px;
+            border-top: 3px solid var(--primary-gold);
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            color: var(--primary-gold);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-section h3:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary-gold);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--primary-sand-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-gold);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--primary-sand-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Leaderboard */
+        .leaderboard {
+            padding: 60px 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            background-color: rgba(139, 115, 85, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--primary-sand);
+            margin-top: 30px;
+        }
+        
+        .leaderboard-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaderboard-table th {
+            background-color: var(--accent-blue);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .leaderboard-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        .leaderboard-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .leaderboard-table tr:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .rank {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-gold);
+            color: var(--primary-dark);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .chapters-container {
+                gap: 15px;
+            }
+            
+            .chapter-card {
+                width: 160px;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .chapters-container {
+                justify-content: center;
+            }
+            
+            .chapter-card {
+                width: 140px;
+                padding: 15px 10px;
+            }
+            
+            .question-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .chapter-card {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .feature-card, .tool-card {
+                width: 100%;
+            }
+            
+            .welcome-content {
+                padding: 30px 20px;
+            }
+            
+            .welcome-content h2 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative Hieroglyphs -->
+    <div class="hieroglyph" style="top: 10%; left: 5%;">𓀀</div>
+    <div class="hieroglyph" style="top: 15%; right: 8%;">𓁍</div>
+    <div class="hieroglyph" style="bottom: 20%; left: 10%;">𓂀</div>
+    <div class="hieroglyph" style="bottom: 15%; right: 5%;">𓃒</div>
+    
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-content">
+            <h2>Welcome Adventurers!</h2>
+            <p>Embark on an epic journey through the mathematics of ancient Egypt. Solve challenges, unlock treasures, and prove your worth to the gods of knowledge.</p>
+            <p>Are you ready to enter the Math Vault?</p>
+            <button id="startBtn" class="start-btn">Begin Your Quest</button>
+        </div>
+    </div>
+    
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">𓁟</div>
+                    <h1>MATH <span>VAULT</span></h1>
+                </div>
+                <div class="user-info">
+                    <div class="points-display">
+                        <i class="fas fa-coins"></i>
+                        <span id="userPoints">1250</span> Points
+                    </div>
+                    <div class="profile">
+                        <div class="profile-img">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span>Adventurer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Quest Map -->
+        <section id="questMap" class="quest-map">
+            <h2 class="section-title egypt-border">Quest Map: Matrices Semester 1</h2>
+            <div class="map-container">
+                <p>Follow the path of knowledge through the 10 chapters of mathematical mastery. Complete each chapter to unlock the next and collect treasures along the way.</p>
+                <div class="chapters-container">
+                    <!-- Chapters will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features -->
+        <section id="features" class="features">
+            <h2 class="section-title egypt-border">Features of the Math Vault</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">𓁛</div>
+                    <h3>AI-Powered Evaluation</h3>
+                    <p>Upload your answers and receive instant feedback with step-by-step solutions from our intelligent AI tutor.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">𓂧</div>
+                    <h3>Gamified Learning</h3>
+                    <p>Earn points, unlock achievements, and collect tools as you progress through mathematically challenging quests.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">𓃖</div>
+                    <h3>Progressive Unlocking</h3>
+                    <p>Chapters unlock sequentially as you master previous content, ensuring a structured learning journey.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">𓆓</div>
+                    <h3>Printable Problem Sets</h3>
+                    <p>Download practice worksheets for offline study and additional practice beyond the digital challenges.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">𓁶</div>
+                    <h3>History Tracking</h3>
+                    <p>Review your past attempts, track progress, and identify areas for improvement with detailed analytics.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">𓂝</div>
+                    <h3>Final Boss Challenge</h3>
+                    <p>Test your knowledge against the ultimate challenge: past year exam questions that require all your accumulated skills.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tools -->
+        <section id="tools" class="tools">
+            <h2 class="section-title egypt-border">Treasure Tools</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: var(--primary-sand-light);">Use your earned points to unlock powerful tools that will aid your quest.</p>
+            <div class="tools-container">
+                <!-- Tools will be populated by JavaScript -->
+            </div>
+        </section>
+        
+        <!-- Leaderboard -->
+        <section id="leaderboard" class="leaderboard">
+            <h2 class="section-title egypt-border">Hall of Knowledge</h2>
+            <div class="leaderboard-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Adventurer</th>
+                            <th>Chapter</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Leaderboard rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Question Modal -->
+    <div id="questionModal" class="question-modal">
+        <div class="question-content">
+            <div class="question-header">
+                <h3 id="questionChapter">CHAPTER 1: NUMBER SYSTEMS</h3>
+                <div class="question-timer">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span id="timer">02:30</span>
+                </div>
+            </div>
+            <div class="question-body">
+                <div id="questionDifficulty" style="margin-bottom: 15px;">
+                    <span class="status-in-progress" style="display: inline-block;">Medium - 150 Points</span>
+                </div>
+                <div class="question-text" id="questionText">
+                    <!-- Question will be populated by JavaScript -->
+                </div>
+                <div class="answer-upload">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 15px;">Upload Your Solution</h4>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <p>Click or drag your solution image here to upload</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px; color: var(--primary-sand-light);">Supported formats: JPG, PNG, PDF</p>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*, .pdf" style="display: none;">
+                </div>
+                <div id="solutionArea" style="display: none;">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 15px;">AI Solution</h4>
+                    <div class="question-text" id="solutionText">
+                        <!-- Solution will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="question-footer">
+                <button id="useToolBtn" class="btn btn-secondary">
+                    <i class="fas fa-toolbox"></i> Use Tool
+                </button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="hintBtn" class="btn btn-secondary">
+                        <i class="fas fa-lightbulb"></i> Hint
+                    </button>
+                    <button id="submitBtn" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Answer
+                    </button>
+                    <button id="closeBtn" class="btn btn-danger">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> support@mathvault.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Cairo, Egypt (Virtual)</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#questMap">Quest Map</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#tools">Tools</a></li>
+                        <li><a href="#leaderboard">Leaderboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Join the Quest</h3>
+                    <p style="color: var(--primary-sand-light); margin-bottom: 15px;">Ready to unlock the mysteries of mathematics?</p>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="startNewQuest()">
+                        <i class="fas fa-play"></i> Start New Quest
+                    </button>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Math Vault. All rights reserved. Created by TOH JEN XUN and TUNG CHEE QI.</p>
+                <p>This is a fictional educational website for demonstration purposes.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Website data
+        const chapters = [
+            { id: 1, title: "NUMBER SYSTEMS", icon: "𓏺", status: "completed", progress: 100 },
+            { id: 2, title: "EQUATIONS, INEQUALITIES AND ABSOLUTE VALUES", icon: "𓏽", status: "completed", progress: 100 },
+            { id: 3, title: "SEQUENCES AND SERIES", icon: "𓏾", status: "in-progress", progress: 60 },
+            { id: 4, title: "MATRICES AND SYSTEM OF LINEAR EQUATIONS", icon: "𓏿", status: "locked", progress: 0 },
+            { id: 5, title: "FUNCTIONS AND GRAPHS", icon: "𓐀", status: "locked", progress: 0 },
+            { id: 6, title: "POLYNOMIALS", icon: "𓐁", status: "locked", progress: 0 },
+            { id: 7, title: "TRIGONOMETRIC FUNCTIONS", icon: "𓐂", status: "locked", progress: 0 },
+            { id: 8, title: "LIMITS AND CONTINUITY", icon: "𓐃", status: "locked", progress: 0 },
+            { id: 9, title: "DIFFERENTIATION", icon: "𓐄", status: "locked", progress: 0 },
+            { id: 10, title: "APPLICATION OF DIFFERENTIATION", icon: "𓐅", status: "locked", progress: 0 }
+        ];
+        
+        const tools = [
+            { name: "Hint", icon: "𓁝", cost: 200, description: "Get a hint for one question" },
+            { name: "Skip Question", icon: "𓁠", cost: 300, description: "Pass this question without penalty" },
+            { name: "Double Points", icon: "𓁭", cost: 500, description: "Double the points for your next correct answer" },
+            { name: "Time Freeze", icon: "𓁫", cost: 400, description: "Freeze the timer for 2 minutes" },
+            { name: "Streak Saver", icon: "𓂋", cost: 350, description: "Save your correct answer streak" },
+            { name: "Immunity", icon: "𓃬", cost: 600, description: "Get a second chance on incorrect answers" }
+        ];
+        
+        const leaderboardData = [
+            { rank: 1, name: "Neferti", chapter: "Chapter 10", points: 8450 },
+            { rank: 2, name: "Khufu", chapter: "Chapter 9", points: 7320 },
+            { rank: 3, name: "Cleopatra", chapter: "Chapter 8", points: 6980 },
+            { rank: 4, name: "Tutankhamun", chapter: "Chapter 7", points: 6450 },
+            { rank: 5, name: "Hatshepsut", chapter: "Chapter 6", points: 5870 },
+            { rank: 6, name: "Ramses", chapter: "Chapter 5", points: 5320 },
+            { rank: 7, name: "Imhotep", chapter: "Chapter 4", points: 4890 },
+            { rank: 8, name: "Sekhmet", chapter: "Chapter 3", points: 4320 },
+            { rank: 9, name: "Anubis", chapter: "Chapter 2", points: 3980 },
+            { rank: 10, name: "Horus", chapter: "Chapter 1", points: 3450 }
+        ];
+        
+        const questions = {
+            1: [
+                {
+                    difficulty: "easy",
+                    points: 100,
+                    text: "Convert the binary number 1011 to its decimal equivalent.",
+                    solution: "Step 1: Write the binary number: 1011\nStep 2: Assign powers of 2 from right to left: 2^3, 2^2, 2^1, 2^0\nStep 3: Multiply each digit by its corresponding power of 2: (1×2^3) + (0×2^2) + (1×2^1) + (1×2^0)\nStep 4: Calculate: (1×8) + (0×4) + (1×2) + (1×1) = 8 + 0 + 2 + 1 = 11\nAnswer: 11"
+                },
+                {
+                    difficulty: "medium",
+                    points: 150,
+                    text: "Simplify the expression: √(18) + √(50) - √(8). Express your answer in simplest radical form.",
+                    solution: "Step 1: Factor each radicand: √(18) = √(9×2) = 3√2\nStep 2: √(50) = √(25×2) = 5√2\nStep 3: √(8) = √(4×2) = 2√2\nStep 4: Combine like terms: 3√2 + 5√2 - 2√2 = (3+5-2)√2 = 6√2\nAnswer: 6√2"
+                },
+                {
+                    difficulty: "hard",
+                    points: 200,
+                    text: "Solve for x: 3^(2x+1) - 10×3^x + 3 = 0",
+                    solution: "Step 1: Let y = 3^x, then 3^(2x+1) = 3×(3^x)^2 = 3y^2\nStep 2: Rewrite equation: 3y^2 - 10y + 3 = 0\nStep 3: Solve quadratic: (3y-1)(y-3)=0 → y=1/3 or y=3\nStep 4: Substitute back: 3^x = 1/3 or 3^x = 3\nStep 5: Solve for x: x = -1 or x = 1\nAnswer: x = -1, 1"
+                }
+            ],
+            2: [
+                {
+                    difficulty: "easy",
+                    points: 100,
+                    text: "Solve the equation: 2x + 5 = 13",
+                    solution: "Step 1: Subtract 5 from both sides: 2x = 8\nStep 2: Divide both sides by 2: x = 4\nAnswer: x = 4"
+                },
+                {
+                    difficulty: "medium",
+                    points: 150,
+                    text: "Solve the inequality: |2x - 3| ≤ 7",
+                    solution: "Step 1: Remove absolute value: -7 ≤ 2x - 3 ≤ 7\nStep 2: Add 3 to all parts: -4 ≤ 2x ≤ 10\nStep 3: Divide all parts by 2: -2 ≤ x ≤ 5\nAnswer: -2 ≤ x ≤ 5"
+                },
+                {
+                    difficulty: "hard",
+                    points: 200,
+                    text: "Find all real solutions to the equation: |x^2 - 4| = 3x",
+                    solution: "Step 1: Consider two cases: x^2 - 4 = 3x or x^2 - 4 = -3x\nStep 2: Solve first case: x^2 - 3x - 4 = 0 → (x-4)(x+1)=0 → x=4 or x=-1\nStep 3: Check in original: |4^2-4|=12, 3×4=12 ✓; |(-1)^2-4|=3, 3×(-1)=-3 ✗\nStep 4: Solve second case: x^2 + 3x - 4 = 0 → (x+4)(x-1)=0 → x=-4 or x=1\nStep 5: Check: |(-4)^2-4|=12, 3×(-4)=-12 ✗; |1^2-4|=3, 3×1=3 ✓\nStep 6: Valid solutions: x=4 and x=1\nAnswer: x = 1, 4"
+                }
+            ],
+            3: [
+                {
+                    difficulty: "easy",
+                    points: 100,
+                    text: "Find the 10th term of the arithmetic sequence: 5, 9, 13, 17, ...",
+                    solution: "Step 1: Identify first term a₁ = 5, common difference d = 4\nStep 2: Use formula for nth term: aₙ = a₁ + (n-1)d\nStep 3: Substitute n=10: a₁₀ = 5 + (10-1)×4 = 5 + 9×4 = 5 + 36 = 41\nAnswer: 41"
+                },
+                {
+                    difficulty: "medium",
+                    points: 150,
+                    text: "Find the sum of the first 15 terms of the geometric series: 3 + 6 + 12 + 24 + ...",
+                    solution: "Step 1: Identify first term a = 3, common ratio r = 2\nStep 2: Use formula for sum of geometric series: Sₙ = a(1-rⁿ)/(1-r)\nStep 3: Substitute n=15: S₁₅ = 3(1-2¹⁵)/(1-2) = 3(1-32768)/(-1) = 3(-32767)/(-1) = 3×32767 = 98301\nAnswer: 98,301"
+                },
+                {
+                    difficulty: "hard",
+                    points: 200,
+                    text: "A sequence is defined recursively by a₁ = 2, a₂ = 5, and aₙ = 5aₙ₋₁ - 6aₙ₋₂ for n ≥ 3. Find a closed-form expression for aₙ.",
+                    solution: "Step 1: Assume solution of form aₙ = rⁿ\nStep 2: Substitute into recurrence: rⁿ = 5rⁿ⁻¹ - 6rⁿ⁻²\nStep 3: Divide by rⁿ⁻²: r² = 5r - 6 → r² - 5r + 6 = 0\nStep 4: Solve: (r-2)(r-3)=0 → r=2 or r=3\nStep 5: General solution: aₙ = A×2ⁿ + B×3ⁿ\nStep 6: Use initial conditions: a₁=2 → 2A+3B=2; a₂=5 → 4A+9B=5\nStep 7: Solve system: A=1, B=0\nStep 8: Closed form: aₙ = 2ⁿ\nAnswer: aₙ = 2ⁿ"
+                }
+            ]
+        };
+        
+        // DOM Elements
+        const welcomeModal = document.getElementById('welcomeModal');
+        const startBtn = document.getElementById('startBtn');
+        const questionModal = document.getElementById('questionModal');
+        const closeBtn = document.getElementById('closeBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const useToolBtn = document.getElementById('useToolBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const chaptersContainer = document.querySelector('.chapters-container');
+        const toolsContainer = document.querySelector('.tools-container');
+        const leaderboardTable = document.querySelector('.leaderboard-table tbody');
+        const userPointsElement = document.getElementById('userPoints');
+        const questionChapterElement = document.getElementById('questionChapter');
+        const questionTextElement = document.getElementById('questionText');
+        const solutionTextElement = document.getElementById('solutionText');
+        const solutionArea = document.getElementById('solutionArea');
+        const timerElement = document.getElementById('timer');
+        const questionDifficultyElement = document.getElementById('questionDifficulty');
+        
+        // State variables
+        let userPoints = 1250;
+        let currentChapter = 3;
+        let timerInterval;
+        let timeLeft = 150; // 2.5 minutes in seconds
+        let currentQuestion = null;
+        
+        // Initialize the website
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate chapters
+            renderChapters();
+            
+            // Populate tools
+            renderTools();
+            
+            // Populate leaderboard
+            renderLeaderboard();
+            
+            // Set up event listeners
+            startBtn.addEventListener('click', closeWelcomeModal);
+            closeBtn.addEventListener('click', closeQuestionModal);
+            submitBtn.addEventListener('click', submitAnswer);
+            hintBtn.addEventListener('click', showHint);
+            useToolBtn.addEventListener('click', useTool);
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            // Set up chapter click events
+            document.querySelectorAll('.chapter-card:not(.locked)').forEach(card => {
+                card.addEventListener('click', handleChapterClick);
+            });
+        });
+        
+        // Render chapters on the quest map
+        function renderChapters() {
+            chaptersContainer.innerHTML = '';
+            
+            chapters.forEach(chapter => {
+                const chapterCard = document.createElement('div');
+                chapterCard.className = `chapter-card ${chapter.status}`;
+                if (chapter.id === currentChapter) {
+                    chapterCard.classList.add('active');
+                }
+                chapterCard.dataset.id = chapter.id;
+                
+                let statusText, statusClass;
+                switch(chapter.status) {
+                    case 'completed':
+                        statusText = 'COMPLETED';
+                        statusClass = 'status-completed';
+                        break;
+                    case 'in-progress':
+                        statusText = 'IN PROGRESS';
+                        statusClass = 'status-in-progress';
+                        break;
+                    default:
+                        statusText = 'LOCKED';
+                        statusClass = 'status-locked';
+                }
+                
+                chapterCard.innerHTML = `
+                    <div class="chapter-icon">${chapter.icon}</div>
+                    <div class="chapter-title">CHAPTER ${chapter.id}</div>
+                    <div class="chapter-status ${statusClass}">${statusText}</div>
+                    <div class="chapter-progress">
+                        <div class="progress-bar" style="width: ${chapter.progress}%"></div>
+                    </div>
+                `;
+                
+                chaptersContainer.appendChild(chapterCard);
+            });
+            
+            // Update chapter click events
+            document.querySelectorAll('.chapter-card:not(.locked)').forEach(card => {
+                card.addEventListener('click', handleChapterClick);
+            });
+        }
+        
+        // Render tools
+        function renderTools() {
+            toolsContainer.innerHTML = '';
+            
+            tools.forEach(tool => {
+                const toolCard = document.createElement('div');
+                toolCard.className = 'tool-card';
+                
+                toolCard.innerHTML = `
+                    <div class="tool-icon">${tool.icon}</div>
+                    <div class="tool-name">${tool.name}</div>
+                    <p style="font-size: 0.9rem; color: var(--primary-sand-light); margin-bottom: 15px;">${tool.description}</p>
+                    <div class="tool-cost">${tool.cost} Points</div>
+                `;
+                
+                toolsContainer.appendChild(toolCard);
+            });
+        }
+        
+        // Render leaderboard
+        function renderLeaderboard() {
+            leaderboardTable.innerHTML = '';
+            
+            leaderboardData.forEach(player => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><span class="rank">${player.rank}</span></td>
+                    <td>${player.name}</td>
+                    <td>${player.chapter}</td>
+                    <td><strong>${player.points}</strong></td>
+                `;
+                
+                leaderboardTable.appendChild(row);
+            });
+        }
+        
+        // Handle chapter click
+        function handleChapterClick(event) {
+            const chapterId = parseInt(event.currentTarget.dataset.id);
+            
+            if (chapterId <= currentChapter) {
+                // Show question for this chapter
+                showQuestionForChapter(chapterId);
+            }
+        }
+        
+        // Show question for a specific chapter
+        function showQuestionForChapter(chapterId) {
+            const chapterQuestions = questions[chapterId];
+            if (!chapterQuestions || chapterQuestions.length === 0) {
+                alert('No questions available for this chapter yet.');
+                return;
+            }
+            
+            // Select a random question from the chapter
+            const randomIndex = Math.floor(Math.random() * chapterQuestions.length);
+            currentQuestion = chapterQuestions[randomIndex];
+            
+            // Update modal content
+            questionChapterElement.textContent = `CHAPTER ${chapterId}: ${chapters.find(c => c.id === chapterId).title}`;
+            questionTextElement.textContent = currentQuestion.text;
+            
+            // Update difficulty display
+            const difficultyText = currentQuestion.difficulty.charAt(0).toUpperCase() + currentQuestion.difficulty.slice(1);
+            questionDifficultyElement.innerHTML = `<span class="status-in-progress" style="display: inline-block;">${difficultyText} - ${currentQuestion.points} Points</span>`;
+            
+            // Reset solution area
+            solutionArea.style.display = 'none';
+            solutionTextElement.textContent = '';
+            
+            // Reset timer
+            timeLeft = 150; // 2.5 minutes
+            updateTimerDisplay();
+            
+            // Start timer
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            // Show modal
+            questionModal.style.display = 'flex';
+        }
+        
+        // Update timer
+        function updateTimer() {
+            timeLeft--;
+            updateTimerDisplay();
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! The question will be closed.');
+                closeQuestionModal();
+            }
+        }
+        
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Close welcome modal
+        function closeWelcomeModal() {
+            welcomeModal.style.display = 'none';
+            
+            // Play a subtle sound effect (in a real implementation)
+            // const audio = new Audio('welcome-sound.mp3');
+            // audio.volume = 0.3;
+            // audio.play();
+        }
+        
+        // Close question modal
+        function closeQuestionModal() {
+            questionModal.style.display = 'none';
+            clearInterval(timerInterval);
+        }
+        
+        // Submit answer
+        function submitAnswer() {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Please upload your solution first!');
+                return;
+            }
+            
+            // Simulate AI checking
+            setTimeout(() => {
+                // In a real implementation, this would be an API call to an AI service
+                
+                // Show solution
+                solutionTextElement.textContent = currentQuestion.solution;
+                solutionArea.style.display = 'block';
+                
+                // Award points
+                userPoints += currentQuestion.points;
+                userPointsElement.textContent = userPoints;
+                
+                // Show success message
+                alert(`Correct! You earned ${currentQuestion.points} points!`);
+                
+                // In a real implementation, would update progress and check if chapter is completed
+            }, 1000);
+        }
+        
+        // Show hint
+        function showHint() {
+            if (userPoints >= 50) {
+                userPoints -= 50;
+                userPointsElement.textContent = userPoints;
+                
+                // Show a hint (in a real implementation, this would be specific to the question)
+                alert('Hint: Try breaking down the problem into smaller steps. Review the related concepts from the video tutorial.');
+            } else {
+                alert('You need at least 50 points to use a hint!');
+            }
+        }
+        
+        // Use tool
+        function useTool() {
+            // In a real implementation, this would open a tool selection modal
+            alert('Tool selection would appear here. You can choose from: Hint, Skip Question, Double Points, Time Freeze, Streak Saver, or Immunity.');
+        }
+        
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // In a real implementation, this would upload to a server
+                uploadArea.innerHTML = `
+                    <div style="color: var(--primary-gold); font-size: 3rem;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p>File uploaded: ${file.name}</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px; color: var(--primary-sand-light);">Ready for AI evaluation</p>
+                `;
+            }
+        }
+        
+        // Start new quest
+        function startNewQuest() {
+            if (confirm('Are you sure you want to start a new quest? Your current progress will be saved.')) {
+                // Reset to chapter 1
+                currentChapter = 1;
+                renderChapters();
+                
+                // Show welcome modal again
+                welcomeModal.style.display = 'flex';
+                
+                // Reset points for demo purposes (in real implementation, would create new user)
+                userPoints = 1250;
+                userPointsElement.textContent = userPoints;
+            }
+        }
+        
+        // Add some interactive effects
+        document.querySelectorAll('.chapter-card, .feature-card, .tool-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = this.classList.contains('chapter-card') ? 'translateY(-10px)' : 'scale(1.05)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
