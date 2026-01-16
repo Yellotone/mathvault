@@ -782,7 +782,7 @@
                 <div class="user-info">
                     <div class="points-display">
                         <i class="fas fa-coins"></i>
-                        <span id="userPoints">1250</span> Points
+                        <span id="userPoints">0</span> Points
                     </div>
                     <div class="profile">
                         <div class="profile-img">
@@ -968,9 +968,9 @@
     <script>
         // Website data
         const chapters = [
-            { id: 1, title: "NUMBER SYSTEMS", icon: "𓏺", status: "in-progress", progress: 50 },
-            { id: 2, title: "EQUATIONS, INEQUALITIES AND ABSOLUTE VALUES", icon: "𓏽", status: "in-progress", progress: 0 },
-            { id: 3, title: "SEQUENCES AND SERIES", icon: "𓏾", status: "in-progress", progress: 0 },
+            { id: 1, title: "NUMBER SYSTEMS", icon: "𓏺", status: "in-progress", progress: 0 },
+            { id: 2, title: "EQUATIONS, INEQUALITIES AND ABSOLUTE VALUES", icon: "𓏽", status: "locked", progress: 0 },
+            { id: 3, title: "SEQUENCES AND SERIES", icon: "𓏾", status: "loced", progress: 0 },
             { id: 4, title: "MATRICES AND SYSTEM OF LINEAR EQUATIONS", icon: "𓏿", status: "locked", progress: 0 },
             { id: 5, title: "FUNCTIONS AND GRAPHS", icon: "𓐀", status: "locked", progress: 0 },
             { id: 6, title: "POLYNOMIALS", icon: "𓐁", status: "locked", progress: 0 },
@@ -1087,8 +1087,8 @@
         const questionDifficultyElement = document.getElementById('questionDifficulty');
         
         // State variables
-        let userPoints = 1250;
-        let currentChapter = 3;
+        let userPoints = 0;
+        let currentChapter = 1;
         let timerInterval;
         let timeLeft = 150; // 2.5 minutes in seconds
         let currentQuestion = null;
@@ -1302,7 +1302,7 @@
                 userPointsElement.textContent = userPoints;
                 
                 // Show success message
-                alert(`Correct! You earned ${currentQuestion.points} points!`);
+                alert(`You got the wrong answer, try again next time!!`);
                 
                 // In a real implementation, would update progress and check if chapter is completed
             }, 1000);
@@ -1372,5 +1372,6 @@
 </body>
 
 </html>
+
 
 
