@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vault · 123 treasure</title>
+  <title>Vault · 123</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
     }
 
     body {
@@ -17,7 +17,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: radial-gradient(circle at 20% 30%, #1f2a3a, #0b1119);
+      background: radial-gradient(circle at 30% 20%, #1f2a3a, #0a1019);
       padding: 20px;
     }
 
@@ -29,7 +29,7 @@
       box-shadow: 0 30px 40px rgba(0,0,0,0.8), inset 0 0 0 2px #5d738b, inset 0 0 12px #a7bed9;
       max-width: 560px;
       width: 100%;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.3s;
       border-bottom: 6px solid #0d151f;
     }
 
@@ -237,6 +237,11 @@
       box-shadow: inset 0 2px 6px #461f1d;
     }
 
+    .status-led.idle {
+      background: #465868;
+      box-shadow: inset 0 2px 6px #0f161f, 0 0 6px #1f2b3a;
+    }
+
     .message-text {
       color: #d6e4f5;
       font-size: 1.25rem;
@@ -244,6 +249,7 @@
       letter-spacing: 0.5px;
       flex: 1;
       text-align: center;
+      min-height: 2.2rem;
     }
 
     .treasure-display {
@@ -297,8 +303,8 @@
   </div>
 
   <div class="message-panel" id="messagePanel">
-    <span class="status-led locked" id="statusLed"></span>
-    <span class="message-text" id="messageText">enter 1‑2‑3</span>
+    <span class="status-led idle" id="statusLed"></span>
+    <span class="message-text" id="messageText">enter combination</span>
   </div>
   <div class="footer-hint">⚙️ default combination: 1 · 2 · 3</div>
 </div>
@@ -309,6 +315,7 @@
     const COMBO = [1, 2, 3];
     let currentDigits = [0, 0, 0];
     let vaultOpened = false;
+    let hasSubmitted = false;      // track if user has pressed OPEN since last reset
 
     // DOM elements
     const digitRow = document.getElementById('digitRow');
@@ -326,11 +333,12 @@
       }
     }
 
-    function setLedState(open) {
-      statusLed.className = 'status-led ' + (open ? 'open' : 'locked');
+    function setLedState(state) {
+      // state: 'open', 'locked', 'idle'
+      statusLed.className = 'status-led ' + state;
     }
 
-    // refresh all UI from state
+    // refresh UI based on state (vaultOpened, hasSubmitted)
     function refreshUI() {
       // update digit values
       for (let i = 0; i < 3; i++) {
@@ -340,94 +348,122 @@
 
       if (vaultOpened) {
         setMessage('✨ vault unlocked · treasures inside ✨', true);
-        setLedState(true);
+        setLedState('open');
         openBtn.disabled = true;
         return;
       }
 
-      // locked: check combo
-      const isCorrect = currentDigits.every((val, idx) => val === COMBO[idx]);
-      if (isCorrect) {
-        setMessage('✅ combo correct — press OPEN');
-        setLedState(false);
+      // vault is locked
+      if (!hasSubmitted) {
+        // No submission yet: show idle / neutral message
+        setMessage('🔢 enter combination');
+        setLedState('idle');
         openBtn.disabled = false;
       } else {
-        setMessage(`🔒 ${currentDigits.join(' · ')}`);
-        setLedState(false);
-        openBtn.disabled = false;
+        // User has submitted: show result (correct or wrong)
+        const isCorrect = currentDigits.every((val, idx) => val === COMBO[idx]);
+        if (isCorrect) {
+          // This case should not happen because correct submission opens vault,
+          // but keep for safety.
+          vaultOpened = true;
+          refreshUI();
+          return;
+        } else {
+          setMessage('❌ wrong combination · try again');
+          setLedState('locked');
+          openBtn.disabled = false;
+        }
       }
     }
 
-    // ----- attempt to open -----
+    // ----- attempt to open (submit) -----
     function attemptOpen() {
       if (vaultOpened) {
         refreshUI();
         return;
       }
 
+      // Mark that user has submitted
+      hasSubmitted = true;
+
       const isCorrect = currentDigits.every((val, idx) => val === COMBO[idx]);
       if (isCorrect) {
+        // SUCCESS: open vault
         vaultOpened = true;
         setMessage('🏆 GOLD & JEWELS UNLOCKED! 🏆', true);
-        setLedState(true);
+        setLedState('open');
         openBtn.disabled = true;
-        // small celebration effect: glow
+        // celebration glow
         document.querySelector('.vault-wrapper').style.boxShadow = '0 0 40px #f7b32b55, 0 30px 40px #000000cc';
       } else {
+        // WRONG: show error, keep locked
         setMessage('❌ wrong combination · try again');
-        setLedState(false);
+        setLedState('locked');
         // nudge effect
         const wrapper = document.querySelector('.vault-wrapper');
         wrapper.style.transform = 'translateX(-8px)';
         setTimeout(() => wrapper.style.transform = '', 120);
+        // open button remains enabled, user can try again
+        openBtn.disabled = false;
       }
     }
 
-    // ----- reset vault (close & reset digits) -----
+    // ----- reset vault (close, reset digits, clear submission flag) -----
     function resetVault() {
       vaultOpened = false;
+      hasSubmitted = false;
       currentDigits = [0, 0, 0];
       // reset glow
       document.querySelector('.vault-wrapper').style.boxShadow = '';
       refreshUI();
-      setMessage('↺ reset · enter 1‑2‑3');
-      setLedState(false);
+      setMessage('↺ reset · enter combination');
+      setLedState('idle');
       openBtn.disabled = false;
     }
 
     // ----- change digit (delta: +1 or -1) -----
     function changeDigit(index, delta) {
       if (vaultOpened) {
-        // if vault is open, you can still spin digits (but we keep treasure message)
+        // If vault is open, spinning digits does nothing to state, but we allow it.
+        // Keep treasure message, just update the number display.
         let newVal = currentDigits[index] + delta;
         if (newVal > 9) newVal = 0;
         if (newVal < 0) newVal = 9;
         currentDigits[index] = newVal;
         const valueSpan = document.querySelector(`.digit-box[data-index="${index}"] .digit-value`);
         if (valueSpan) valueSpan.textContent = currentDigits[index];
-        // keep treasure message, but we don't change opened state
         return;
       }
 
-      // normal locked: change digit
+      // Normal locked state: change digit
       let newVal = currentDigits[index] + delta;
       if (newVal > 9) newVal = 0;
       if (newVal < 0) newVal = 9;
       currentDigits[index] = newVal;
 
-      // update display
+      // Update display
       const valueSpan = document.querySelector(`.digit-box[data-index="${index}"] .digit-value`);
       if (valueSpan) valueSpan.textContent = currentDigits[index];
 
-      // check if combo matches after change
-      const isCorrect = currentDigits.every((val, idx) => val === COMBO[idx]);
-      if (isCorrect) {
-        setMessage('✅ combo correct — press OPEN');
-        setLedState(false);
-      } else {
-        setMessage(`🔒 ${currentDigits.join(' · ')}`);
-        setLedState(false);
+      // If user has already submitted and failed, we clear the error message
+      // and go back to idle state (but keep hasSubmitted true? we want them to
+      // try again, but we should show neutral state until they submit again)
+      if (hasSubmitted && !vaultOpened) {
+        // After a wrong attempt, if user changes digits, we reset the submission state
+        // so they can try again without seeing the error.
+        hasSubmitted = false;
+        setMessage('🔢 enter combination');
+        setLedState('idle');
+        openBtn.disabled = false;
+      } else if (!hasSubmitted && !vaultOpened) {
+        // Still idle, keep neutral message
+        setMessage('🔢 enter combination');
+        setLedState('idle');
       }
+
+      // If combo is correct and user hasn't submitted, we don't reveal it.
+      // We keep showing neutral message.
+      // The open button stays enabled.
       openBtn.disabled = false;
     }
 
@@ -476,9 +512,10 @@
       buildSpinners();
       currentDigits = [0, 0, 0];
       vaultOpened = false;
+      hasSubmitted = false;
       refreshUI();
-      setMessage('🔢 enter 1‑2‑3');
-      setLedState(false);
+      setMessage('🔢 enter combination');
+      setLedState('idle');
       openBtn.disabled = false;
 
       openBtn.addEventListener('click', attemptOpen);
